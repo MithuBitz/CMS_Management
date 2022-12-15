@@ -1,22 +1,21 @@
-package com.mibitstech.cmsmanag
+package com.mibitstech.cmsmanag.activities
 
-import android.graphics.Typeface
+import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.WindowInsets
 import android.view.WindowManager
-import com.mibitstech.cmsmanag.databinding.ActivitySplashBinding
+import com.mibitstech.cmsmanag.databinding.ActivityIntroBinding
 
-class SplashActivity : AppCompatActivity() {
-
-    private var binding: ActivitySplashBinding? = null
+class IntroActivity : AppCompatActivity() {
+    private var binding: ActivityIntroBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivitySplashBinding.inflate(layoutInflater)
+        binding = ActivityIntroBinding.inflate(layoutInflater)
         setContentView(binding?.root)
-
+        //FullScreen display
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.hide(WindowInsets.Type.statusBars())
         } else {
@@ -27,14 +26,12 @@ class SplashActivity : AppCompatActivity() {
             )
         }
 
-        val typeFace: Typeface = Typeface.createFromAsset(assets, "DiplomataSC-Regular.ttf")
-        binding?.appNameTv?.typeface = typeFace
+        binding?.btnSignUpIntro?.setOnClickListener {
+            startActivity(Intent(this, SignUpActivity::class.java))
+        }
+        binding?.btnSignInIntro?.setOnClickListener {
+            startActivity(Intent(this, SignInActivity::class.java))
+        }
 
-
-    }
-
-    override fun onDestroy() {
-        binding = null
-        super.onDestroy()
     }
 }

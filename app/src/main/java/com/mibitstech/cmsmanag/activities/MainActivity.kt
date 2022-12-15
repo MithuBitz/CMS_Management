@@ -1,7 +1,8 @@
-package com.mibitstech.cmsmanag
+package com.mibitstech.cmsmanag.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.mibitstech.cmsmanag.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

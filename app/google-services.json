@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1026023058448",
+    "project_id": "micms-bf92b",
+    "storage_bucket": "micms-bf92b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1026023058448:android:26c9c0791ce3593c5c2e95",
+        "android_client_info": {
+          "package_name": "com.mibitstech.cmsmanag"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1026023058448-02rmj9e6790i7sag0si9lmgb6789bm7q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJio1TdcYyKzJAQKeixP5mM9f2d46R_ag"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1026023058448-02rmj9e6790i7sag0si9lmgb6789bm7q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -6,8 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:background="@drawable/sky"
-    tools:context=".SplashActivity">
+    android:background="@drawable/ic_splash_background"
+    tools:context=".activities.SplashActivity">
 
     <TextView
         android:id="@+id/appNameTv"
