@@ -8,7 +8,7 @@ import android.view.WindowInsets
 import android.view.WindowManager
 import com.mibitstech.cmsmanag.databinding.ActivityIntroBinding
 
-class IntroActivity : AppCompatActivity() {
+class IntroActivity : BaseActivity() {
     private var binding: ActivityIntroBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {

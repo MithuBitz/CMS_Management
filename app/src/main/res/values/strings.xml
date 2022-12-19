@@ -13,4 +13,5 @@
     <string name="email">Email</string>
 
     <string name="sign_in_description_text">Enter your name, email id and password, to register with us.</string>
+    <string name="please_wait">Please Wait&#8230;</string>
 </resources>
