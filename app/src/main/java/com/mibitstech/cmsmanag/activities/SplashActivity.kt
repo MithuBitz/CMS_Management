@@ -9,7 +9,9 @@ import android.os.Handler
 import android.os.Looper
 import android.view.WindowInsets
 import android.view.WindowManager
+import androidx.core.content.ContextCompat.startActivity
 import com.mibitstech.cmsmanag.databinding.ActivitySplashBinding
+import com.mibitstech.cmsmanag.firebase.FirestoreClass
 
 class SplashActivity : AppCompatActivity() {
 
@@ -39,7 +41,13 @@ class SplashActivity : AppCompatActivity() {
 //        2500)
 
         Handler(Looper.getMainLooper()).postDelayed({
-            startActivity(Intent(this, IntroActivity::class.java))
+
+            var currentUserId = FirestoreClass().getCurrentUserId()
+            if (currentUserId.isNotEmpty()){
+                startActivity(Intent(this, MainActivity::class.java))
+            }else {
+                startActivity(Intent(this, IntroActivity::class.java))
+            }
             finish()
         },
         2500)

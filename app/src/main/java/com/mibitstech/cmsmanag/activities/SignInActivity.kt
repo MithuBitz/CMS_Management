@@ -13,6 +13,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.mibitstech.cmsmanag.R
 import com.mibitstech.cmsmanag.databinding.ActivitySignInBinding
+import com.mibitstech.cmsmanag.models.User
 
 class SignInActivity : BaseActivity() {
     private var binding: ActivitySignInBinding? = null
@@ -88,5 +89,11 @@ class SignInActivity : BaseActivity() {
                 }
         }
 
+    }
+
+    fun signInSuccess(user: User){
+        hideProgressDialog()
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 }
