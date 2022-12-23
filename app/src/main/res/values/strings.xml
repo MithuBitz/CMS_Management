@@ -14,4 +14,7 @@
 
     <string name="sign_in_description_text">Enter your name, email id and password, to register with us.</string>
     <string name="please_wait">Please Wait&#8230;</string>
+
+    <string name="nav_my_profile">My Profile</string>
+    <string name="nav_signout">Sign Out</string>
 </resources>
