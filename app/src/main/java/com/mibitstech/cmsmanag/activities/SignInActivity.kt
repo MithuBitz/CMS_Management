@@ -80,7 +80,7 @@ class SignInActivity : BaseActivity() {
                     hideProgressDialog()
                     if (task.isSuccessful){
                         val user = auth.currentUser
-                        Toast.makeText(this@SignInActivity, "$user successfully login", Toast.LENGTH_SHORT).show()
+
                         startActivity(Intent(this, MainActivity::class.java))
                     } else {
                         Toast.makeText(this@SignInActivity, task.exception!!.message, Toast.LENGTH_LONG).show()
