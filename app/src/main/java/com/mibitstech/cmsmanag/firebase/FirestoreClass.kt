@@ -2,6 +2,7 @@ package com.mibitstech.cmsmanag.firebase
 
 import android.app.Activity
 import android.util.Log
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.SetOptions
@@ -29,6 +30,23 @@ class FirestoreClass {
             }.addOnFailureListener {
                 e->
                 Log.e(activity.javaClass.simpleName, "Error writeing document", e)
+            }
+    }
+
+    fun updateUserProfileData(activity: ProfileActivity, userHashMap: HashMap<String, Any>){
+        mFireStore.collection(Constants.USERS)
+            .document(getCurrentUserId())
+            .update(userHashMap)
+            .addOnSuccessListener {
+                Log.i(activity.javaClass.simpleName, "Profile Successfully updated")
+                Toast.makeText(activity, "Profile Updated", Toast.LENGTH_LONG).show()
+                activity.profileUpdateSuccess()
+            }
+            .addOnFailureListener {
+                e ->
+                activity.hideProgressDialog()
+                Log.i(activity.javaClass.simpleName, "Error occure while updateing", e)
+                Toast.makeText(activity, "Error in updating", Toast.LENGTH_LONG).show()
             }
     }
 

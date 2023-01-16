@@ -7,14 +7,19 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
+import android.webkit.MimeTypeMap
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.mibitstech.cmsmanag.R
 import com.mibitstech.cmsmanag.databinding.ActivityProfileBinding
 import com.mibitstech.cmsmanag.firebase.FirestoreClass
 import com.mibitstech.cmsmanag.models.User
+import com.mibitstech.cmsmanag.utils.Constants
 import java.io.IOException
 
 class ProfileActivity : BaseActivity() {
@@ -25,6 +30,8 @@ class ProfileActivity : BaseActivity() {
     }
 
     private var mSelectedImageFileUri: Uri? = null
+    private var mProfileImageUrl: String = ""
+    private lateinit var mUserData: User
 
     private lateinit var binding: ActivityProfileBinding
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,6 +48,15 @@ class ProfileActivity : BaseActivity() {
                 showImageChooser()
             } else {
                 ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), READ_STORAGE_PERMISSION_CODE)
+            }
+        }
+
+        binding.btnUpdate.setOnClickListener {
+            if (mSelectedImageFileUri != null){
+                uploadUserImage()
+            } else {
+                showProgressDialog(resources.getString(R.string.please_wait))
+                updateUserProfileData()
             }
         }
     }
@@ -74,6 +90,8 @@ class ProfileActivity : BaseActivity() {
 
     fun setUserDateInUi(user: User) {
 
+        mUserData = user
+
         Glide.with(this)
             .load(user.image)
             .centerCrop()
@@ -85,6 +103,7 @@ class ProfileActivity : BaseActivity() {
         if (user.mobile != 0L){
             binding.etMobile.setText(user.mobile.toString())
         }
+
     }
 
     //Function to open gallery to set the profile image
@@ -110,5 +129,65 @@ class ProfileActivity : BaseActivity() {
             }
         }
     }
+
+
+    //Get the file type extension
+    private fun getFileExtention(uri: Uri?): String? {
+        return MimeTypeMap.getSingleton().getExtensionFromMimeType(contentResolver.getType(uri!!))
+    }
+
+    private fun uploadUserImage(){
+        showProgressDialog(resources.getString(R.string.please_wait))
+
+        if (mSelectedImageFileUri != null){
+            val sRef : StorageReference = FirebaseStorage.getInstance().reference.child(
+                "USER_IMAGE" + System.currentTimeMillis() + "." + getFileExtention(mSelectedImageFileUri))
+
+            sRef.putFile(mSelectedImageFileUri!!).addOnSuccessListener {
+                taskSnapshot ->
+                Log.i("Firebase Image Url: ", taskSnapshot.metadata?.reference?.downloadUrl.toString())
+
+                taskSnapshot.metadata?.reference?.downloadUrl?.addOnSuccessListener {
+                    uri ->
+                    mProfileImageUrl = uri.toString()
+                    Log.i("DownloadableImageUri: ", uri.toString())
+                    updateUserProfileData()
+                }
+            }.addOnFailureListener {
+                exception ->
+                Toast.makeText(this@ProfileActivity, exception.message, Toast.LENGTH_LONG).show()
+                hideProgressDialog()
+            }
+        }
+
+    }
+
+    private fun updateUserProfileData(){
+
+        val userHashMap = HashMap<String, Any>()
+
+        if (mProfileImageUrl.isNotEmpty() && mProfileImageUrl != mUserData.image){
+            userHashMap[Constants.IMAGE] = mProfileImageUrl
+
+        }
+        if (binding.etName.text.toString() != mUserData.name){
+            userHashMap[Constants.NAME] = binding.etName.text.toString()
+
+        }
+        if (binding.etMobile.text.toString() != mUserData.mobile.toString()){
+            userHashMap[Constants.MOBILE] = binding.etMobile.text.toString().toLong()
+
+        }
+
+        FirestoreClass().updateUserProfileData(this, userHashMap)
+
+    }
+
+
+    fun profileUpdateSuccess(){
+        hideProgressDialog()
+        finish()
+    }
+
 
 }
