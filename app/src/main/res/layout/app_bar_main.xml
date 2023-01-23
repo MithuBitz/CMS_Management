@@ -21,4 +21,13 @@
 
     <include layout="@layout/main_content"/>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/createBoardFAB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        app:srcCompat= "@drawable/ic_add"
+        android:layout_margin="@dimen/fab_margin"
+        android:contentDescription="fab" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

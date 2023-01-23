@@ -1,8 +1,11 @@
 package com.mibitstech.cmsmanag.activities
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.core.view.GravityCompat
 import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
@@ -14,8 +17,14 @@ import com.mibitstech.cmsmanag.databinding.ActivityMainBinding
 import com.mibitstech.cmsmanag.databinding.NavHeaderMainBinding
 import com.mibitstech.cmsmanag.firebase.FirestoreClass
 import com.mibitstech.cmsmanag.models.User
+import com.mibitstech.cmsmanag.utils.Constants
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+    companion object {
+        const val MY_PROFILE_REQUEST_CODE: Int = 11
+    }
+    private lateinit var mUserName: String
     private var binding: ActivityMainBinding? = null
 
     private lateinit var auth: FirebaseAuth
@@ -30,6 +39,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         FirestoreClass().updateUserData(this@MainActivity)
 
         binding?.navView?.setNavigationItemSelectedListener(this)
+
+        binding?.includeAppBarMain?.createBoardFAB?.setOnClickListener {
+            val intent = Intent(this@MainActivity, CreateBoardActivity::class.java)
+            intent.putExtra(Constants.NAME, mUserName)
+            startActivity(intent)
+        }
     }
 
     private fun setUpActionBar(){
@@ -57,11 +72,21 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK && requestCode == MY_PROFILE_REQUEST_CODE){
+            FirestoreClass().updateUserData(this)
+        } else {
+            Log.e("Cancelled update on Nav", "Cancel")
+            Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show()
+        }
+    }
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.navMyProfile -> {
                 val intent = Intent(this, ProfileActivity::class.java)
-                startActivity(intent)
+                startActivityForResult(intent, MY_PROFILE_REQUEST_CODE)
             }
 
             R.id.navSignOut -> {
@@ -81,6 +106,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     fun updateNavigationUserDetails(user: User){
         val headerView = binding?.navView?.getHeaderView(0)
         val headerBinding = NavHeaderMainBinding.bind(headerView!!)
+
+        mUserName = user.name
 
         Glide.with(this)
             .load(user.image)

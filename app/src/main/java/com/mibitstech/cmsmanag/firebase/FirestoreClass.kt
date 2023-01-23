@@ -8,10 +8,8 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.mibitstech.cmsmanag.activities.MainActivity
-import com.mibitstech.cmsmanag.activities.ProfileActivity
-import com.mibitstech.cmsmanag.activities.SignInActivity
-import com.mibitstech.cmsmanag.activities.SignUpActivity
+import com.mibitstech.cmsmanag.activities.*
+import com.mibitstech.cmsmanag.models.Board
 import com.mibitstech.cmsmanag.models.User
 import com.mibitstech.cmsmanag.utils.Constants
 
@@ -25,11 +23,26 @@ class FirestoreClass {
         mFireStore.collection(Constants.USERS)
             .document(getCurrentUserId())
             .set(userInfo, SetOptions.merge())
-            .addOnCompleteListener {
+            .addOnSuccessListener {
                 activity.userRegisteredSuccess()
             }.addOnFailureListener {
                 e->
                 Log.e(activity.javaClass.simpleName, "Error writeing document", e)
+            }
+    }
+
+    fun createBoard(activity: CreateBoardActivity, board: Board){
+        mFireStore.collection(Constants.BOARDS)
+            .document()
+            .set(board, SetOptions.merge())
+            .addOnSuccessListener {
+                activity.createBoardSuccessfully()
+                Log.i("Board: ", "Succesfully Created")
+                Toast.makeText(activity, "Board Create Successfully", Toast.LENGTH_LONG).show()
+            }.addOnFailureListener {
+                exception ->
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName, "Error Createing Board", exception)
             }
     }
 
