@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.mibitstech.cmsmanag.activities.*
 import com.mibitstech.cmsmanag.models.Board
@@ -46,6 +47,43 @@ class FirestoreClass {
             }
     }
 
+    fun getBoardList(activity: MainActivity){
+        mFireStore.collection(Constants.BOARDS)
+            .whereArrayContains(Constants.ASSIGN_TO, getCurrentUserId())
+            .get()
+            .addOnSuccessListener {
+                document ->
+                Log.i(activity.javaClass.simpleName, document.documents.toString())
+                val boardList: ArrayList<Board> = ArrayList()
+                for (i in document.documents){
+                    val board = i.toObject(Board::class.java)!!
+                    board?.documentId = i.id
+                    boardList.add(board)
+                }
+                activity.populateBoardListToUi(boardList)
+            }.addOnFailureListener {
+                e ->
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName, "Error from getting the Boards", e)
+            }
+    }
+
+    fun getBoardDetails(activity: TaskListActivity, documentId: String){
+        mFireStore.collection(Constants.BOARDS)
+            .document(documentId)
+            .get()
+            .addOnSuccessListener {
+                    document ->
+                Log.i(activity.javaClass.simpleName, document.toString())
+                activity.boardDetails(document.toObject(Board::class.java)!!)
+
+            }.addOnFailureListener {
+                    e ->
+                activity.hideProgressDialog()
+                Log.e(activity.javaClass.simpleName, "Error from getting the Boards", e)
+            }
+    }
+
     fun updateUserProfileData(activity: ProfileActivity, userHashMap: HashMap<String, Any>){
         mFireStore.collection(Constants.USERS)
             .document(getCurrentUserId())
@@ -63,7 +101,7 @@ class FirestoreClass {
             }
     }
 
-    fun updateUserData(activity: Activity){
+    fun updateUserData(activity: Activity, readBoardList: Boolean = false){
         mFireStore.collection(Constants.USERS)
             .document(getCurrentUserId())
             .get()
@@ -75,7 +113,7 @@ class FirestoreClass {
                         activity.signInSuccess(loggedInUser)
                     }
                     is MainActivity -> {
-                        activity.updateNavigationUserDetails(loggedInUser)
+                        activity.updateNavigationUserDetails(loggedInUser, readBoardList)
                     }
                     is ProfileActivity -> {
                         activity.setUserDateInUi(loggedInUser)
